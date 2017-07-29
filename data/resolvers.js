@@ -33,9 +33,7 @@ const resolvers = {
   		return stampuser.stamp;
   	},
   	serviceuser(stampuser) {
-  	return refVal('/services/').then(function(services) {
-		return filter(services, {owner: stampuser.userKey});
-  		})
+  		return stampuser.stamp;
 	}
   },
 
@@ -58,13 +56,26 @@ const resolvers = {
             })
     },
   },
-
-  /*ServiceItem: {
-  	owner(serviceItem) {
-  		console.log(serviceItem);
-  	    return serviceItem;
-  	}
-  }*/
+  
+  ServiceUser: {
+  	  	services(stampData) {
+  		var serviceKey, servicesPromise, serviceArray= [];
+  		return refVal('/services/').then(function(userServices) {
+            servicesPromise = userServices;
+        })
+        .then(function() {
+  			for(var service in stampData.services) {
+  			serviceKey = stampData.services[service].serviceItemKey;  
+  		    for(var userService in servicesPromise ) {
+                if(serviceKey === userService) {
+                	serviceArray.push(servicesPromise[userService]);
+                } 
+            };      	
+  		    };
+             return serviceArray;
+            })
+    },
+  },
 }
 
 export default resolvers;
