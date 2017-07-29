@@ -1,5 +1,5 @@
 import { find, filter } from 'lodash';
-import refVal  from './connector';
+import  refVal from './connector';
 
 const resolvers = {
 	Query: {
@@ -29,12 +29,42 @@ const resolvers = {
   },
 
   StampUser: {
+  	stamp(stampuser) {
+  		return stampuser.stamp;
+  	},
   	serviceuser(stampuser) {
   	return refVal('/services/').then(function(services) {
 		return filter(services, {owner: stampuser.userKey});
   		})
 	}
   },
+
+  StampData: {
+  	services(stampData) {
+  		var serviceKey, servicesPromise, serviceArray= [];
+  		return refVal('/services/').then(function(userServices) {
+            servicesPromise = userServices;
+        })
+        .then(function() {
+  			for(var service in stampData.services) {
+  			serviceKey = stampData.services[service].serviceItemKey;  
+  		    for(var userService in servicesPromise ) {
+                if(serviceKey === userService) {
+                	serviceArray.push(servicesPromise[userService]);
+                } 
+            };      	
+  		    };
+             return serviceArray;
+            })
+    },
+  },
+
+  /*ServiceItem: {
+  	owner(serviceItem) {
+  		console.log(serviceItem);
+  	    return serviceItem;
+  	}
+  }*/
 }
 
 export default resolvers;
