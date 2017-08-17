@@ -4,15 +4,49 @@ import {
 import resolvers from './resolvers';
 
 const typeDefs = `
-type StampUser {
-  userKey: String
-  google: GoogleUser
+type User {
+  google: GoogleData
   stamp: StampData
-  twitter: TwitterUser
-  serviceuser: ServiceUser
+  twitter: TwitterData
 }
-
-type ServiceUser {
+type GoogleData {
+  displayName: String
+  email: String
+  photoURL: String
+  refreshToken: String
+  uid: String
+}
+type TwitterData {
+  displayName: String
+  photoURL: String
+  refreshToken: String
+  uid: String
+}
+type StampData {
+  avatar_url: String
+  bio: String
+  events: [StampEvent]
+  headline: String
+  location: String
+  name: String
+  timezone: String
+  username: String
+  weblink: String
+}
+type Stamps {
+  stamps: [StampEvent]
+}
+type StampEvent {
+  owner: User
+  parties: User
+  serviceName: String
+  status: String
+  time: String
+}
+type UserServices {
+  userServices: [Services]
+}
+type Services {
   services: [ServiceItem]
 }
 
@@ -24,44 +58,16 @@ type ServiceItem {
   location: String
   price: Int
   title: String
-  owner: StampUser
+  owner: User
 }
-
 type Availability {
   times: [String]
   weekdays: [Boolean]
 }
-
-type GoogleUser {
-  displayName: String
-  email: String
-  photoURL: String
-  refreshToken: String
-  uid: String
-}
-
-type StampData {
-  bio: String
-  headline: String
-  services: [ServiceItem]
-  username: String
-}
-
-type TwitterUser {
-  displayName: String
-  photoURL: String
-  refreshToken: String
-  uid: String
-}
-
 type Query {
-  serviceItems(category: String): [ServiceItem]
-  serviceUserData(userKey:String): [ServiceItem]
-  stampUser(userKey:String): StampUser
+  getUser(uid: String): User
+  getServices(category: String): [ServiceItem]
 }
 `;
 
-
 export default makeExecutableSchema({typeDefs, resolvers});
-
-
